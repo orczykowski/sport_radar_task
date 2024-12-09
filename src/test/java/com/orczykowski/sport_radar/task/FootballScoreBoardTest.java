@@ -58,6 +58,41 @@ class FootballScoreBoardTest {
     }
 
     @Test
+    void shouldSortScoreBoardByResultAndDate() {
+        //given
+
+        Team teamA = new Team(Team.TeamId.generate(), new Team.TeamName("Team A"));
+        Team teamB = new Team(Team.TeamId.generate(), new Team.TeamName("Team B"));
+        Team teamC = new Team(Team.TeamId.generate(), new Team.TeamName("Team C"));
+        Team teamD = new Team(Team.TeamId.generate(), new Team.TeamName("Team D"));
+        Team teamE = new Team(Team.TeamId.generate(), new Team.TeamName("Team E"));
+        Team teamF = new Team(Team.TeamId.generate(), new Team.TeamName("Team F"));
+        final var id1 = subject.addMatchBetween(teamA, teamB);
+        final var id2 = subject.addMatchBetween(teamC, teamD);
+        final var id3 = subject.addMatchBetween(teamE, teamF);
+
+        subject.scoreGoalHome(id2);
+        subject.scoreGoalHome(id3);
+        subject.scoreGoalHome(id3);
+        subject.scoreGoalHome(id3);
+
+        //when
+        final var scoreBoard = subject.print();
+
+        //then
+        final var expectedScoreBoard = """
+                LiveWorldCupFootballScoreBoard
+                --------------------------------
+                                
+                Team E 3 - 0 Team F
+                Team C 1 - 0 Team D
+                Team A 0 - 0 Team B
+                --------------------------------
+                """;
+        Assertions.assertEquals(expectedScoreBoard, scoreBoard);
+    }
+
+    @Test
     void shouldNotAllowToScoreHomeGoalForNonExistingMatch() {
         //when
         final var exception = Assertions.assertThrows(IllegalArgumentException.class, () -> subject.scoreGoalHome(NON_EXISTING_MATCH_ID));
@@ -91,10 +126,10 @@ class FootballScoreBoardTest {
         subject.endMatch(id);
 
         //when
-        final var exception = Assertions.assertThrows(IllegalStateException.class, () -> subject.scoreGoalHome(id));
+        final var exception = Assertions.assertThrows(IllegalArgumentException.class, () -> subject.scoreGoalHome(id));
 
         //then
-        Assertions.assertEquals("Match is already finished", exception.getMessage());
+        Assertions.assertEquals("Match not found", exception.getMessage());
     }
 
     @Test
@@ -104,10 +139,10 @@ class FootballScoreBoardTest {
         subject.endMatch(id);
 
         //when
-        final var exception = Assertions.assertThrows(IllegalStateException.class, () -> subject.scoreGoalAway(id));
+        final var exception = Assertions.assertThrows(IllegalArgumentException.class, () -> subject.scoreGoalAway(id));
 
         //then
-        Assertions.assertEquals("Match is already finished", exception.getMessage());
+        Assertions.assertEquals("Match not found", exception.getMessage());
     }
 
     @Test

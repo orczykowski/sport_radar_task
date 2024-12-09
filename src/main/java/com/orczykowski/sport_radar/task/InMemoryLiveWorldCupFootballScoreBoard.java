@@ -65,6 +65,16 @@ public class InMemoryLiveWorldCupFootballScoreBoard implements FootballScoreBoar
         return "LiveWorldCupFootballScoreBoard\n"
                 + "--------------------------------\n"
                 + board.values().stream()
+                .sorted((m1, m2) -> {
+                    int scoreComparison = Integer.compare(
+                            m2.getHomeTeamGoals() + m2.getAwayTeamGoals(),
+                            m1.getHomeTeamGoals() + m1.getAwayTeamGoals()
+                    );
+                    if (scoreComparison == 0) {
+                        return m2.startTime().compareTo(m1.startTime());
+                    }
+                    return scoreComparison;
+                })
                 .map(Match::printResult)
                 .reduce("", (a, b) -> a + "\n" + b)
                 + "\n--------------------------------\n";

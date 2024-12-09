@@ -94,6 +94,17 @@ class Match {
         return awayTeam;
     }
 
+    Integer getHomeTeamGoals() {
+        return playStats.homeTeamGoals();
+    }
+
+    Integer getAwayTeamGoals() {
+        return playStats.awayTeamGoals();
+    }
+
+    Instant startTime() {
+        return startTime;
+    }
 
     record MatchSnapshot(String homeTeamName, String awayTeamName,
                          Integer homeTeamGoals, Integer awayTeamGoals,
